@@ -1,0 +1,74 @@
+Resources:
+  MyRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: gangareddy-repo
+      RepositoryDescription: My CodeCommit repository
+      Tags:
+        - Key: Environment
+          Value: Production
+          
+  # MyCodeBuildProject:
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Name: my-project01
+  #     Description: My CodeBuild project
+  #     ServiceRole: 
+  #       Ref: MyCodeBuildServiceRole
+  #     Environment:
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       Image: aws/codebuild/standard:5.0
+  #       Type: LINUX_CONTAINER
+  #       EnvironmentVariables:
+  #         - Name: REPOSITORY_NAME
+  #           Value:  
+  #             Ref: MyRepository
+  #         - Name: BRANCH_NAME
+  #           Value: master
+  #     Source:
+  #       Type: CODECOMMIT
+  #       Location: 
+  #         Ref: MyRepository
+  #       BuildSpec: buildspec.yml
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+        
+  MyPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: my-pipeline
+      RoleArn:  
+        Ref: arn:aws:iam::610837408615:role/forpipeline
+      ArtifactStore:
+        Type: S3
+        Location: cf-templates-z514z0uo5emi-ap-northeast-1
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+                Version: '1'
+              OutputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                RepositoryName: 
+                  Ref: MyRepository
+                BranchName: master
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: BuildArtifact
+              Configuration:
+                ProjectName: 
+                  Ref: MyCodeBuildProject

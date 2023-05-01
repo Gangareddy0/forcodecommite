@@ -1,0 +1,11 @@
+Resources:
+  MyBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "mybucketname"
+      VersioningConfiguration:
+        Status: "Enabled"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true 
+ 

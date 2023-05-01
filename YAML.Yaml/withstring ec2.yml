@@ -1,0 +1,23 @@
+parameters:
+  mykeypairName:
+    Type: "string"
+  myimageid:
+    Type: "string"
+Resources:
+  Myec2instance:
+    Type: AWS::EC2::INSTANCE 
+    Properties:
+      KeyName: 
+      InstanceType: t2.micro
+      securityGroups:
+        - Ref: MysecurityGroup
+      ImageId: 
+  MysecurityGroup:
+    Type: AWS::EC2::SecurityGroup 
+    Properties:
+      GroupDescription: for SSH clints only 
+      SecurtityGroupingress:
+        ipProtocol: tcp 
+        ToPort: "22"
+        FromPort: "22"
+        Cidrip: 0.0.0.0/0
